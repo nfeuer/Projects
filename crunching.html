@@ -1,0 +1,108 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+
+
+  <style> </style>
+  <script language="javascript" type="text/javascript">
+  var initA = [1,2,3,4,5,6,7,8,9,0,11,12,3,4,5,1,1,2,3,4,5,6,1,2,3,1,2,3,6,6,7,1,2,8,2,1];
+  var detA = [];
+  var n = Math.sqrt(initA.length);
+
+  function init() {
+    console.log(initA);
+    console.log(initA.length);
+
+    console.log("n = "+n);
+
+    var myArray = [];
+    var count = 0;
+
+    for(var i = 0; i < n; i++){
+      var sort = [];
+      for(var j = 0; j < n; j++){
+        sort.push(initA[count]);
+        count++;
+      }
+      myArray.push(sort);
+    }
+    console.log(myArray);
+
+    start(1,myArray);
+
+  }
+
+  function start(t,find){ //My recursive function
+     //Create empty array to hold new array
+    var fullDet = 0;
+    console.log("start");
+    console.log(find.length);
+
+    //for(var i = 0; i < find.length; i++) {
+      for(var j = 0; j < find.length; j++) {
+        console.log("new");
+        var hold = [];
+        for(var a = 0; a < find.length; a++) {
+          var sort = []; //Create a new empty row array for each iteration
+          if(a != 0) {
+
+            console.log(hold);
+            for(var b = 0; b < find.length; b++) {
+              if(b != j) {
+                sort.push(find[a][b]); //Build row
+                console.log("!");
+              }
+            }
+            hold.push(sort); //Push row into matrix array
+            console.log("*");
+          }
+        }
+        if(hold.length == 3){
+          console.log("compute");
+          console.log(hold);
+          fullDet += Math.pow(-1,j)*find[0][j]*compute(hold);
+        
+        } else { //If it were working properly there wouldn't be an else if before this
+
+          //console.log(hold);
+          //console.log(hold.length);
+          if(n == find.length){
+          detA.push(start(Math.pow(-1,j)*find[0][j],hold)); //This might need some more work but I think this is kinda in the right direction
+          console.log(detA);
+        } else {
+          fullDet += start(Math.pow(-1,j)*find[0][j],hold);
+        }
+        }
+      }
+      if(n != find.length){
+        console.log(t*fullDet);
+      return t*fullDet;
+    }
+    //}
+    for(var i = 0; i < find.length; i++){
+      fullDet += detA[i];
+    }
+    console.log("The final determinant is "+fullDet);
+  }
+
+  function compute(small) { //Calculate determinant of 3x3 matrix
+    var determinant;
+
+    console.log(small);
+    determinant = small[0][0]*(small[1][1]*small[2][2]-small[1][2]*small[2][1]);
+    determinant -= small[0][1]*(small[1][0]*small[2][2]-small[1][2]*small[2][0]);
+    determinant += small[0][2]*(small[1][0]*small[2][1]-small[1][1]*small[2][0]);
+    console.log("determinant: "+ determinant);
+    return determinant;
+
+  }
+
+
+
+
+  </script>
+</head>
+
+<body onload="init()">
+</body>
+</html>
