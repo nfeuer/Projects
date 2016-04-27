@@ -1,5 +1,7 @@
 var socket = io.connect(window.location.origin);
 
+// =========================== Socket functions =================
+
 socket.on('request', function(data) {
   if(data == true){
     if(direction.length > 0) {
@@ -12,6 +14,7 @@ socket.on('request', function(data) {
 
     socket.emit('reciveB', snake);
     console.log("Sending current status "+ snake);
+    socket.emit('timer', timed);
   } else {
   console.log("Did not send data");
 }
@@ -19,6 +22,7 @@ socket.on('request', function(data) {
 
 socket.on('tail', function(entries) {
   direction = [];
+  console.log("IMPORTANT: "+direction);
   if(entries[0][0] === undefined && entries.length == 2){
     direction.push([entries[0],entries[1]]);
   } else {
@@ -26,7 +30,6 @@ socket.on('tail', function(entries) {
       direction.push(entries[i]);
     }
   }
-
   console.log("Welcome to Spaz Snake!!");
 });
 
@@ -54,10 +57,15 @@ socket.on('queue', function(entries) {
       direction.push(entries[i]);
     }
   }
-  console.log("Sent Queue");
+  console.log("Update Queue"+direction);
   //if a new direction array is received, overwrite existing direction array!
 });
 
+socket.on('set', function(data) {
+  timed = data;
+});
+
+//======================= Begin Sketch ====================
 
 var snake = [[0, 0],[1, 0],[2, 0]];
 var boxes = [];
@@ -97,32 +105,27 @@ function keyPressed() {
         directionX = 0;
         directionY = -1;
         console.log("UP");
-        //moves.unshift([snake[0][0]+directionX,snake[0][1]+directionY]); //upload to server queue
-        direction.unshift([directionX, directionY]); //save direction it went and upload
+        direction.unshift([directionX, directionY]);
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === DOWN_ARROW) {
         directionX = 0;
         directionY = 1;
         console.log("DOWN");
-        //moves.unshift([snake[0][0]+directionX,snake[0][1]+directionY]); //upload to server queue
-        direction.unshift([directionX, directionY]); //save direction it went and upload
+        direction.unshift([directionX, directionY]);
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === RIGHT_ARROW) {
         directionX = 1;
         directionY = 0;
         console.log("RIGHT");
-        //moves.unshift([snake[0][0]+directionX,snake[0][1]+directionY]); //upload to server queue
-        direction.unshift([directionX, directionY]); //save direction it went and upload
+        direction.unshift([directionX, directionY]);
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     } else if (keyCode === LEFT_ARROW) {
         directionX = -1;
         directionY = 0;
         console.log("LEFT");
-        //moves.unshift([snake[0][0]+directionX,snake[0][1]+directionY]); //upload to server queue
-        direction.unshift([directionX, directionY]); //save direction it went and upload
+        direction.unshift([directionX, directionY]);
         socket.emit('keyEvent', {dirX:directionX,dirY:directionY});
     }
-
 
 }
 
@@ -181,6 +184,7 @@ function time() { //import moves and direction arrays
         }
         //console.log("move");
         if (direction.length > 0) {
+            socket.emit('recieveQ', direction);
             snake.unshift([snake[0][0] + direction[direct][0], snake[0][1] + direction[direct][1]]);
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
