@@ -12,41 +12,44 @@ server.listen(process.env.PORT || 5000);
 
 app.use(express.static('public'));
 
-
 io.on('connection', function (socket) {
   socket.broadcast.emit('request', user);
   socket.on('recieveQ', function(data) {
-    for(var i = 0; i < entries.length; i++){
-      direction[i] = entries[i];
+    direction = [];
+    for(var i = 0; i < data.length; i++){
+      direction[i] = data[i];
     }
-    console.log("Recived Queue");
+    console.log("Recived Queue: "+direction);
   });
 
   socket.on('recieveH', function(hold) {
     firm[0] = hold[0];
     firm[1] = hold[1];
-    console.log("Recieved Hold");
+    console.log("Recieved Hold: "+firm);
   });
 
   socket.on('reciveB', function(data) {
+    console.log("Got to B");
     for(var i = 0; i < data.length; i++){
       for(var j = 0; j < 2; j++) {
         snake[i][j] = data[i][j];
       }
     }
-    console.log(snake);
+    console.log("Snake: "+snake);
     socket.broadcast.emit('current', snake);
   });
 
   if(direction.length > 0) {
     socket.emit('tail', direction);
+    console.log("happens once emit tail")
   } else {
     socket.emit('hold', firm);
     console.log("Updated Hold");
   }
 
-
-
+  socket.on('timer', function(data) {
+    socket.emit('set', data);
+  });
 
   socket.on('keyEvent', function (data) {
     //console.log(data);
@@ -58,7 +61,7 @@ io.on('connection', function (socket) {
     // console.log("dY:"+directionY);
     //console.log("serverD:"+direction);
     socket.broadcast.emit('queue', direction);
+    console.log("Broadcast queue: "+direction);
 
   });
-
 });
