@@ -41,12 +41,12 @@
     //for(var i = 0; i < find.length; i++) {
       for(var j = 0; j < find.length; j++) {
         //console.log("new");
-        var hold = [];
+        //var hold = [];
         for(var a = 0; a < find.length; a++) {
           var sort = []; //Create a new empty row array for each iteration
           if(a != 0) {
 
-            console.log(hold);
+            //console.log(hold);
             for(var b = 0; b < find.length; b++) {
               if(b != j) {
                 sort.push(find[a][b]); //Build row
@@ -67,8 +67,8 @@
           //console.log(hold);
           //console.log(hold.length);
           if(n == find.length){
-          detA.push(start(Math.pow(-1,j)*find[0][j],hold)); /
-          console.log(detA);
+          detA.push(start(Math.pow(-1,j)*find[0][j],hold)); 
+          //console.log(detA);
         } else {
           fullDet += start(Math.pow(-1,j)*find[0][j],hold);
         }
