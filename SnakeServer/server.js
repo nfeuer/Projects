@@ -7,6 +7,8 @@ var direction = new Array();
 var firm = [];
 var user = true;
 var snake = [[0, 0],[1, 0],[2, 0]];
+var nx = 0;
+var ny = 0;
 
 server.listen(process.env.PORT || 5000);
 
@@ -14,6 +16,19 @@ app.use(express.static('public'));
 
 io.on('connection', function (socket) {
   socket.broadcast.emit('request', user);
+  socket.on('target', function(loc) {
+    nx = loc.x;
+    ny = loc.y;
+    if(loc.hit) {
+      nx = Math.floor(Math.random()*50);
+      ny = Math.floor(Math.random()*50);
+      console.log("New Apple");
+    }
+    console.log("Send Target Location");
+    socket.emit('locked', {x:nx,y:ny});
+    socket.broadcast.emit('locked', {x:nx,y:ny});
+  });
+
   socket.on('recieveQ', function(data) {
     direction = [];
     for(var i = 0; i < data.length; i++){
@@ -30,12 +45,13 @@ io.on('connection', function (socket) {
 
   socket.on('reciveB', function(data) {
     console.log("Got to B");
+    snake = [];
     for(var i = 0; i < data.length; i++){
-      for(var j = 0; j < 2; j++) {
-        snake[i][j] = data[i][j];
-      }
+        console.log("Happened i: "+i);
+        snake.push(data[i]);
     }
     console.log("Snake: "+snake);
+
     socket.broadcast.emit('current', snake);
   });
 
@@ -64,4 +80,5 @@ io.on('connection', function (socket) {
     console.log("Broadcast queue: "+direction);
 
   });
+
 });
