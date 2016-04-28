@@ -11,7 +11,7 @@ socket.on('request', function(data) {
       socket.emit('recieveH', hold);
       console.log("Sent Hold");
     }
-
+    socket.emit('target', {x:nx,y:ny,hit:false});
     socket.emit('reciveB', snake);
     console.log("Sending current status "+ snake);
     socket.emit('timer', timed);
@@ -40,10 +40,10 @@ socket.on('hold', function(data) {
 });
 
 socket.on('current', function(body) {
+  //console.log(body);
+  snake = [];
   for(var i = 0; i < body.length; i++){
-    for(var j = 0; j < 2; j++) {
-      snake[i][j] = body[i][j];
-    }
+      snake.push(body[i]);
   }
   console.log("Init body "+ snake);
 });
@@ -59,6 +59,14 @@ socket.on('queue', function(entries) {
   }
   console.log("Update Queue"+direction);
   //if a new direction array is received, overwrite existing direction array!
+});
+
+socket.on('locked', function(loc) {
+  nx = loc.x;
+  ny = loc.y;
+  console.log("Locked on target..");
+
+  a = new Snake(nx*w, ny*h, w, h);
 });
 
 socket.on('set', function(data) {
@@ -134,10 +142,10 @@ function draw() {
     time();
 
     background(255);
-    // for (var i = 0; i < 500; i += w) {
-    //     line(i, 0, i, 500);
-    //     line(0, i, 500, i);
-    // }
+    for (var i = 0; i < 500; i += w) {
+        line(i, 0, i, 500);
+        line(0, i, 500, i);
+    }
 
     for (var i = 0; i < snake.length; i++) {
         var tx = snake[i][0];
@@ -189,7 +197,9 @@ function time() { //import moves and direction arrays
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
             } else {
-                apple();
+                //apple();
+                socket.emit('target', {x:nx,y:ny,hit:true});
+                socket.emit('reciveB', snake);
             }
             if (direction.length > 0) {
 
@@ -201,7 +211,9 @@ function time() { //import moves and direction arrays
             if (snake[0][0] != nx || snake[0][1] != ny) {
                 shorten(snake);
             } else {
-                apple();
+                //apple();
+                socket.emit('target', {x:nx,y:ny,hit:true});
+                socket.emit('reciveB', snake);
             }
         }
 
@@ -225,9 +237,9 @@ function Snake(x, y, w, h) {
 
 //=============== Apple =================
 
-function apple() {
-    nx = int(random(0, 50));
-    ny = int(random(0, 50));
-
-    a = new Snake(nx * w, ny * h, w, h);
-}
+// function apple() {
+//     nx = int(random(0, 50));
+//     ny = int(random(0, 50));
+//
+//     a = new Snake(nx * w, ny * h, w, h);
+// }
