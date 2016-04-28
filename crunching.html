@@ -7,13 +7,31 @@
   <script language="javascript" type="text/javascript">
   var initA = [1,2,3,4,5,6,7,8,9,0,11,12,3,4,5,1,1,2,3,4,5,6,1,2,3,1,2,3,6,6,7,1,2,8,2,1];
   var detA = [];
-  var n = Math.sqrt(initA.length);
+  var n;
+  var newDiv;
+  var newP;
 
   function init() {
+    initA = [];
+    for(var i = 0; i < 36; i++) { //comment this out for input array
+      initA.push(Math.floor(Math.random()*10));
+    }
+    n = Math.sqrt(initA.length);
     console.log(initA);
     console.log(initA.length);
 
     console.log("n = "+n);
+    // for(var j = n; j > 2; j--){
+    //   newDiv = document.createElement('div');
+    //   newDiv.id = "ar"+j;
+    //   document.body.appendChild(newDiv);
+    //   for(var i = 0; i < n; i++) {
+  	//       newP = document.createElement('p');
+  	//       newP.className = "row"+i;
+  	//       document.getElementById("ar"+j).appendChild(newP);
+    //   }
+    // }
+
 
     var myArray = [];
     var count = 0;
@@ -35,13 +53,16 @@
   function start(t,find){ //My recursive function
      //Create empty array to hold new array
     var fullDet = 0;
-    //console.log("start");
-    //console.log(find.length);
+    console.log("start");
+    var stage = find.length;
+
+
+
 
     //for(var i = 0; i < find.length; i++) {
       for(var j = 0; j < find.length; j++) {
         //console.log("new");
-        //var hold = [];
+        var hold = [];
         for(var a = 0; a < find.length; a++) {
           var sort = []; //Create a new empty row array for each iteration
           if(a != 0) {
@@ -50,7 +71,7 @@
             for(var b = 0; b < find.length; b++) {
               if(b != j) {
                 sort.push(find[a][b]); //Build row
-               // console.log("!");
+              //  console.log("!");
               }
             }
             hold.push(sort); //Push row into matrix array
@@ -61,13 +82,16 @@
           //console.log("compute");
           //console.log(hold);
           fullDet += Math.pow(-1,j)*find[0][j]*compute(hold);
-        
-        } else { 
+
+        } else { //If it were working properly there wouldn't be an else if before this
 
           //console.log(hold);
           //console.log(hold.length);
           if(n == find.length){
-          detA.push(start(Math.pow(-1,j)*find[0][j],hold)); 
+          detA.push(start(Math.pow(-1,j)*find[0][j],hold)); //This might need some more work but I think this is kinda in the right direction
+          // for(var i = 0; i < stage; i++){
+          //   document.getElementById('ar'+stage).querySelectorAll("p.row"+i).innerHTML = Math.pow(-1,j)*find[0][j] + '|'  + hold[i] +  '|';
+          // }
           //console.log(detA);
         } else {
           fullDet += start(Math.pow(-1,j)*find[0][j],hold);
@@ -75,7 +99,7 @@
         }
       }
       if(n != find.length){
-        //console.log(t*fullDet);
+        console.log(t*fullDet + " Iterated");
       return t*fullDet;
     }
     //}
@@ -104,6 +128,8 @@
 </head>
 
 <body onload="init()">
-  <h1>See console for determinant of n*n matrix</h1>
+
+
+
 </body>
 </html>
